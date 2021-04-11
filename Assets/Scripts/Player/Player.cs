@@ -16,12 +16,14 @@ public class Player : MonoBehaviour
     Rigidbody2D rb;
     Animator animator;
     SpriteRenderer spriteRenderer;
+    AudioSource audioSource;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void Update()
     {
@@ -63,6 +65,7 @@ public class Player : MonoBehaviour
     {
         if (CheckStatus())
         {
+            JumpSound();
             animator.SetTrigger(StaticFields.Jump);
             isGround = false;
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -72,6 +75,7 @@ public class Player : MonoBehaviour
     {
         if (CheckStatus())
         {
+            JumpSound();
             spriteRenderer.flipX = false;
             animator.SetTrigger(StaticFields.Jump);
             isGround = false;
@@ -82,6 +86,7 @@ public class Player : MonoBehaviour
     {
         if (CheckStatus())
         {
+            JumpSound();
             spriteRenderer.flipX = true;
             animator.SetTrigger(StaticFields.Jump);
             isGround = false;
@@ -117,6 +122,14 @@ public class Player : MonoBehaviour
         }
         return true;
     }
+
+    void JumpSound()
+    {
+        int n = Random.Range(0, 3);
+        AudioClip clip = Resources.Load<AudioClip>("Audio/Jump/" + n.ToString());
+        audioSource.PlayOneShot(clip);
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
