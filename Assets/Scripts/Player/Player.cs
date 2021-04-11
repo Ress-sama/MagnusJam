@@ -26,6 +26,11 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MouseEvent();
+        if (transform.position.y < -5f)
+        {
+            GameManager.INSTANCE.GameOverScreen();
+            return;
+        }
     }
     void MouseEvent()
     {
@@ -103,7 +108,6 @@ public class Player : MonoBehaviour
             rb.AddForce(Vector2.left * slideForce, ForceMode2D.Impulse);
         }
     }
-
 
     bool CheckStatus()
     {
