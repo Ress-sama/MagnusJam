@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     float slideForce;
 
     bool isGround = true;
+    bool isWalking = false;
+    bool isJump = false;
     public bool CanSlide { get; set; } = true;
 
     Rigidbody2D rb;
@@ -28,6 +30,15 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MouseEvent();
+        if (!isWalking)
+        {
+            if (audioSource.clip.name.Equals("Steps"))
+                audioSource.Stop();
+            if (isJump)
+            {
+                JumpSound();
+            }
+        }
         if (transform.position.y < -15f)
         {
             GameManager.INSTANCE.GameOverScreen();
@@ -46,23 +57,33 @@ public class Player : MonoBehaviour
         }
         if (!Input.GetMouseButton(1) && !Input.GetMouseButton(0))
         {
+            isJump = false;
+            isWalking = false;
             animator.SetFloat(StaticFields.VelocityX, 0f);
         }
     }
     void Left()
     {
+        isJump = false;
+        isWalking = true;
+        WalkSound();
         spriteRenderer.flipX = true;
         animator.SetFloat(StaticFields.VelocityX, 1f);
         transform.Translate(Vector3.left * Time.deltaTime * speed);
     }
     void Right()
     {
+        isJump = false;
+        isWalking = true;
+        WalkSound();
         spriteRenderer.flipX = false;
         animator.SetFloat(StaticFields.VelocityX, 1f);
         transform.Translate(Vector3.right * Time.deltaTime * speed);
     }
     void Jump()
     {
+        isJump = true;
+        isWalking = false;
         if (CheckStatus())
         {
             JumpSound();
@@ -73,6 +94,8 @@ public class Player : MonoBehaviour
     }
     void JumpRight()
     {
+        isJump = true;
+        isWalking = false;
         if (CheckStatus())
         {
             JumpSound();
@@ -84,6 +107,8 @@ public class Player : MonoBehaviour
     }
     void JumpLeft()
     {
+        isJump = true;
+        isWalking = false;
         if (CheckStatus())
         {
             JumpSound();
@@ -95,6 +120,8 @@ public class Player : MonoBehaviour
     }
     void SlideRight()
     {
+        isJump = false;
+        isWalking = false;
         if (CheckStatus())
         {
             CanSlide = false;
@@ -105,6 +132,8 @@ public class Player : MonoBehaviour
     }
     void SlideLeft()
     {
+        isJump = false;
+        isWalking = false;
         if (CheckStatus())
         {
             CanSlide = false;
@@ -127,7 +156,16 @@ public class Player : MonoBehaviour
     {
         int n = Random.Range(0, 3);
         AudioClip clip = Resources.Load<AudioClip>("Audio/Jump/" + n.ToString());
-        audioSource.PlayOneShot(clip);
+        audioSource.clip = clip;
+        if (!audioSource.isPlaying)
+            audioSource.PlayOneShot(clip);
+    }
+    void WalkSound()
+    {
+        AudioClip clip = Resources.Load<AudioClip>("Audio/Steps");
+        audioSource.clip = clip;
+        if (!audioSource.isPlaying)
+            audioSource.PlayOneShot(clip);
     }
 
 
