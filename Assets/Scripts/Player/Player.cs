@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MouseEvent();
-        if (transform.position.y < -5f)
+        if (transform.position.y < -15f)
         {
             GameManager.INSTANCE.GameOverScreen();
             return;

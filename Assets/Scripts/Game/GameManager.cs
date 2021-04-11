@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -18,6 +19,8 @@ public class GameManager : MonoBehaviour
     GameObject gameOverScreen;
     [SerializeField]
     GameObject levelCompleteScreen;
+    [SerializeField]
+    Transform[] cameraPositions;
 
     GameObject leftButton;
     GameObject rightButton;
@@ -25,15 +28,18 @@ public class GameManager : MonoBehaviour
     GameObject mouse;
     GameObject toolBar;
     GameObject ready;
+    Vector3 offset;
     bool showLevel;
-    [Range(0, 10)]
-    [SerializeField]
-    float range;
     bool isShowUi;
+    int index;
+    [SerializeField]
+    float transitionSpeed;
     public static GameManager INSTANCE { get; set; }
 
     private void Start()
     {
+        offset = new Vector3(0f, 0f, 10f);
+        index = 0;
         INSTANCE = this;
         player = GameObject.FindGameObjectWithTag(Tags.Player);
         showLevel = true;
@@ -43,21 +49,22 @@ public class GameManager : MonoBehaviour
     {
         if (showLevel)
         {
-            Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, range, 0.5f * Time.deltaTime);
-            if (range - Camera.main.orthographicSize <= 1)
+            if (index >= cameraPositions.Length)
             {
-                range = 5;
                 showLevel = false;
+                return;
+            }
+            Camera.main.transform.position = Vector3.MoveTowards(Camera.main.transform.position, cameraPositions[index].position - offset, transitionSpeed * Time.deltaTime);
+            if (Camera.main.transform.position == cameraPositions[index].position - offset)
+            {
+                index++;
             }
         }
         else if (isShowUi)
         {
-            Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, range, 0.5f * Time.deltaTime);
-            if (Camera.main.orthographicSize - range <= 1)
-            {
-                ShowUI();
-                isShowUi = false;
-            }
+            ShowUI();
+            Camera.main.GetComponent<CameraManager>().enabled = true;
+            isShowUi = false;
         }
     }
 
@@ -67,8 +74,18 @@ public class GameManager : MonoBehaviour
         rightButton = GameObject.Find(StaticFields.Right);
         if (CheckButtons())
         {
-            player.GetComponent<Player>().enabled = true;
             HideUI();
+            StartCoroutine(SetActivePlayer());
+        }
+    }
+    IEnumerator SetActivePlayer()
+    {
+        yield return new WaitForSeconds(2f);
+        player.GetComponent<Player>().enabled = true;
+        while (Camera.main.orthographicSize >= 5)
+        {
+            Camera.main.orthographicSize -= 0.05f;
+            yield return new WaitForFixedUpdate();
         }
     }
     bool CheckButtons()
@@ -88,7 +105,7 @@ public class GameManager : MonoBehaviour
 
         iTween.MoveTo(mouse, iTween.Hash("position", showMouse.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
         iTween.MoveTo(toolBar, iTween.Hash("position", showToolBar.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
-        ready.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
+        ready.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400f);
     }
     void HideUI()
     {
