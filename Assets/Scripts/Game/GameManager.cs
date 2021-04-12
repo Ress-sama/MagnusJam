@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour
         {
             levelCompleteScreen.transform.GetChild(0).GetComponent<Text>().text = "END GAME";
             levelCompleteScreen.transform.GetChild(1).gameObject.SetActive(false);
+            levelCompleteScreen.transform.GetChild(2).gameObject.SetActive(true);
             levelCompleteScreen.SetActive(true);
             Invoke(nameof(EndGame), 4f);
         }
