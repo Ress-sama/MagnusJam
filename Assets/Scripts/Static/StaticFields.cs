@@ -9,4 +9,5 @@
     public static string Left { get; } = "Left";
     public static string Right { get; } = "Right";
     public static string GameOver { get; } = "GameOver";
+    public static bool[] LevelDone { get; set; } = new bool[3];
 }

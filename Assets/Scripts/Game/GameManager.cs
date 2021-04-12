@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -133,10 +134,26 @@ public class GameManager : MonoBehaviour
     }
     public void LevelCompleteScreen()
     {
-        levelCompleteScreen.SetActive(true);
+        if (SceneManager.GetActiveScene().buildIndex < 4)
+            levelCompleteScreen.SetActive(true);
+        else
+        {
+            levelCompleteScreen.transform.GetChild(0).GetComponent<Text>().text = "END GAME";
+            levelCompleteScreen.transform.GetChild(1).gameObject.SetActive(false);
+            levelCompleteScreen.SetActive(true);
+            Invoke(nameof(EndGame), 4f);
+        }
     }
     public void NextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        if (SceneManager.GetActiveScene().buildIndex < 4)
+        {
+            StaticFields.LevelDone[SceneManager.GetActiveScene().buildIndex - 2] = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
+    public void EndGame()
+    {
+        Debug.Log("To be continue...");
     }
 }
