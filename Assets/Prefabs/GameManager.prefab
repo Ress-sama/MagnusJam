@@ -49,4 +49,9 @@ MonoBehaviour:
   showToolBar: {fileID: 0}
   gameOverScreen: {fileID: 0}
   levelCompleteScreen: {fileID: 0}
-  range: 10
+  restartButton: {fileID: 0}
+  cameraPositions:
+  - {fileID: 0}
+  - {fileID: 0}
+  menu: {fileID: 0}
+  transitionSpeed: 6

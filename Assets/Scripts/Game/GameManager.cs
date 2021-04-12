@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
     GameObject mouse;
     GameObject toolBar;
     GameObject ready;
+    [SerializeField]
+    GameObject menu;
     Vector3 offset;
     bool showLevel;
     bool isShowUi;
@@ -50,6 +52,10 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Esc();
+        }
         if (showLevel)
         {
             if (index >= cameraPositions.Length)
@@ -155,5 +161,36 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         Debug.Log("To be continue...");
+    }
+    public void Play()
+    {
+        ResumeGame();
+        menu.SetActive(false);
+    }
+    public void Quit()
+    {
+        Application.Quit();
+    }
+    void Esc()
+    {
+        if (!menu.activeSelf)
+        {
+            PauseGame();
+            menu.SetActive(true);
+        }
+        else
+        {
+            ResumeGame();
+            menu.SetActive(false);
+        }
+    }
+    void PauseGame()
+    {
+        Time.timeScale = 0;
+    }
+
+    void ResumeGame()
+    {
+        Time.timeScale = 1;
     }
 }
