@@ -19,6 +19,7 @@ public class Reverse : MonoBehaviour
         {
             GameManager.LeftButton = buttons[GameManager.LeftButton].ToString();
             GameManager.RightButton = buttons[GameManager.RightButton].ToString();
+            gameObject.SetActive(false);
         }
     }
 }

@@ -3,12 +3,18 @@ public class Push : MonoBehaviour
 {
     [SerializeField]
     float force;
-    private void OnCollisionEnter2D(Collision2D collision)
+    Animator animator;
+    private void Start()
     {
-        if (collision.collider.CompareTag(Tags.Player))
+        animator = GetComponent<Animator>();
+    }
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag(Tags.Player))
         {
-            collision.collider.gameObject.GetComponent<Rigidbody2D>()
+            collider.gameObject.GetComponent<Rigidbody2D>()
                 .AddForce(transform.up * force, ForceMode2D.Impulse);
+            animator.SetBool(Tags.Push, true);
         }
     }
 }

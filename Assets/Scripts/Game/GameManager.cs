@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject levelCompleteScreen;
     [SerializeField]
+    GameObject restartButton;
+    [SerializeField]
     Transform[] cameraPositions;
 
     GameObject leftButton;
@@ -106,6 +108,7 @@ public class GameManager : MonoBehaviour
         iTween.MoveTo(mouse, iTween.Hash("position", showMouse.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
         iTween.MoveTo(toolBar, iTween.Hash("position", showToolBar.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
         ready.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 400f);
+        restartButton.SetActive(false);
     }
     void HideUI()
     {
@@ -117,6 +120,7 @@ public class GameManager : MonoBehaviour
 
         iTween.MoveTo(mouse, iTween.Hash("position", hideMouse.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
         iTween.MoveTo(toolBar, iTween.Hash("position", hideToolBar.position, "time", 1.4f, "easeType", iTween.EaseType.easeInBack));
+        restartButton.SetActive(true);
 
     }
     public void GameOverScreen()

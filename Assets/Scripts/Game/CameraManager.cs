@@ -14,6 +14,8 @@ public class CameraManager : MonoBehaviour
     float minX;
     [SerializeField]
     float minY;
+    [SerializeField]
+    float smoothValue;
 
     private void Start()
     {
@@ -21,9 +23,10 @@ public class CameraManager : MonoBehaviour
     }
     private void Update()
     {
-        transform.position = new Vector3(
-        Mathf.Clamp(player.transform.position.x, minX, maxX),
-        Mathf.Clamp(player.transform.position.y, minX, maxY),
-        transform.position.z);
+
+        transform.position = Vector3.Lerp(transform.position, new Vector3(
+                Mathf.Clamp(player.transform.position.x, minX, maxX),
+                Mathf.Clamp(player.transform.position.y, minX, maxY),
+                transform.position.z), smoothValue);
     }
 }

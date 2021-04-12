@@ -10,8 +10,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     float slideForce;
 
+    [SerializeField]
     bool isGround = true;
     bool isWalking = false;
+    [SerializeField]
     bool isJump = false;
     public bool CanSlide { get; set; } = true;
 
@@ -19,6 +21,12 @@ public class Player : MonoBehaviour
     Animator animator;
     SpriteRenderer spriteRenderer;
     AudioSource audioSource;
+    public BoxCollider2D boxCollider;
+    public LayerMask groundLayer;
+    [SerializeField]
+    float raycastDistance = 0.8f;
+    
+
 
     private void Start()
     {
@@ -26,9 +34,14 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        boxCollider = GetComponent<BoxCollider2D>();
     }
     private void Update()
     {
+        if (!isJump)
+        {
+            IsGrounded();
+        }
         MouseEvent();
         if (!isWalking)
         {
@@ -102,7 +115,7 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = false;
             animator.SetTrigger(StaticFields.Jump);
             isGround = false;
-            rb.AddForce(Vector2.one * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce(new Vector3(0.4f, 1f) * jumpForce, ForceMode2D.Impulse);
         }
     }
     void JumpLeft()
@@ -115,7 +128,7 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = true;
             animator.SetTrigger(StaticFields.Jump);
             isGround = false;
-            rb.AddForce(new Vector2(-1, 1) * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(-0.4f, 1) * jumpForce, ForceMode2D.Impulse);
         }
     }
     void SlideRight()
@@ -128,6 +141,8 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = false;
             animator.SetTrigger(StaticFields.Slide);
             rb.AddForce(Vector2.right * slideForce, ForceMode2D.Impulse);
+            boxCollider.size = new Vector2(1.3f, 1);
+            boxCollider.offset = new Vector2(0, -1);
         }
     }
     void SlideLeft()
@@ -140,6 +155,12 @@ public class Player : MonoBehaviour
             spriteRenderer.flipX = true;
             animator.SetTrigger(StaticFields.Slide);
             rb.AddForce(Vector2.left * slideForce, ForceMode2D.Impulse);
+            boxCollider.size = new Vector2(1.3f, 1);
+            boxCollider.offset = new Vector2(0, -1);
+        }
+        else
+        {
+            return;
         }
     }
 
@@ -149,7 +170,10 @@ public class Player : MonoBehaviour
         {
             return false;
         }
+
         return true;
+
+
     }
 
     void JumpSound()
@@ -167,16 +191,36 @@ public class Player : MonoBehaviour
         if (!audioSource.isPlaying)
             audioSource.PlayOneShot(clip);
     }
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    void IsGrounded()
     {
-        if (collision.collider.CompareTag(Tags.Ground))
+        Vector2 position = new Vector2(transform.position.x+ boxCollider.size.x / 4, transform.position.y);
+        Vector2 position2 = new Vector2(transform.position.x- boxCollider.size.x / 4, transform.position.y);
+        Vector2 direction = Vector2.down;
+
+        RaycastHit2D hitRight = Physics2D.Raycast(position, direction, raycastDistance, groundLayer);
+        RaycastHit2D hitLeft = Physics2D.Raycast(position2, direction, raycastDistance, groundLayer);
+        Debug.DrawRay(position, direction, Color.red);
+        Debug.DrawRay(position2, direction, Color.red);
+        if (hitRight.collider != null|| hitLeft.collider != null)
+        {
             isGround = true;
+            return;
+        }
+
+        isGround = false;
+
     }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag(Tags.Ground))
-            isGround = false;
-    }
+
+
+
+    /*    private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.collider.CompareTag(Tags.Ground))
+                isGround = true;
+        }
+        private void OnCollisionExit2D(Collision2D collision)
+        {
+            if (collision.collider.CompareTag(Tags.Ground))
+                isGround = false;
+        }*/
 }
