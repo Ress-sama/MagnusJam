@@ -1,0 +1,2 @@
+# MagnusJam
+For Magnus Gamejam
